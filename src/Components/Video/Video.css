@@ -1,0 +1,6 @@
+.video-container {
+  height: 300px;
+  width: 400px;
+  border: 1px solid blueviolet;
+  border-radius: 10px;
+}
