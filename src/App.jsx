@@ -79,7 +79,6 @@ function App() {
         autoPlay
         playsInline
         muted
-        style={{ width: '250px', height: '250px' }}
       />
       <VideosList users={users} />
       <ControlPanel

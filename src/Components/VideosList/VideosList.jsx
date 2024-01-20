@@ -7,11 +7,11 @@ function VideosList({ users }) {
   console.log('*****************************');
   console.log(users);
   return (
-    <div>
+    <>
       {users.map((user) => (
         <Video key={user.uid} user={user} />
       ))}
-    </div>
+    </>
   );
 }
 export default VideosList;

@@ -34,7 +34,6 @@ function Video({ user }) {
       ref={videoRef}
       autoPlay
       playsInline
-      style={{ width: '250px', height: '250px' }}
     />
   );
 }
