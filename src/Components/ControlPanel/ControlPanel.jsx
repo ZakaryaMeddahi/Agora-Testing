@@ -6,11 +6,11 @@ import micOff from '../../assets/mic-off.svg';
 import Cast from '../../assets/Cast.svg';
 import EndCall from '../../assets/EndCall.svg';
 import videocam from '../../assets/videocam.svg';
-import noise from '../../assets/noise.svg'
+import noise from '../../assets/noise.svg';
 import videoCamOff from '../../assets/videocam_off.svg';
 // import moreOption from '../assets/moreOption.svg';
 import { useState } from 'react';
-import './ControlPanel.css'
+import './ControlPanel.css';
 
 function ControlPanel({
   clientRef,
@@ -26,8 +26,8 @@ function ControlPanel({
   return (
     <div className="panel">
       <div>
-        <img 
-          src={noise} 
+        <img
+          src={noise}
           alt="icon about remove noise"
           onClick={async () => {
             let denoiser = new AIDenoiserExtension({
@@ -45,50 +45,50 @@ function ControlPanel({
               processor = null;
             };
             let processor = denoiser.createProcessor();
-            
+
             localAudioTrackRef.current
-            .pipe(processor)
-            .pipe(localAudioTrackRef.current.processorDestination);
+              .pipe(processor)
+              .pipe(localAudioTrackRef.current.processorDestination);
             await processor.enable();
-          }} 
+          }}
         />
-        </div>
-        <div>
-          <img 
-            src={Cam}
-            alt="icon of video cam"  
-            onClick={async () => {
-              if (localCameraTrackRef.current.muted) {
-                setCam(videocam);
-                localCameraTrackRef.current.setMuted(false);
-              } else {
-                setCam(videoCamOff);
-                localCameraTrackRef.current.setMuted(true);
-              }
-            }} 
-          />
-        </div>
-        <div>
-          <img 
-            src={Mic} 
-            alt="icon of mic"  
-            onClick={async () => {
-              if (localAudioTrackRef.current.muted) {
-                console.log("On");
-                setMic(mic);
-                await localAudioTrackRef.current.setMuted(false);
-              } else {
-                console.log("Off");
-                setMic(micOff);
-                await localAudioTrackRef.current.setMuted(true);
-              }
-            }} 
-          />
+      </div>
+      <div style={{ display: isScreenSharing ? 'none' : 'grid' }}>
+        <img
+          src={Cam}
+          alt="icon of video cam"
+          onClick={async () => {
+            if (localCameraTrackRef.current.muted) {
+              setCam(videocam);
+              localCameraTrackRef.current.setMuted(false);
+            } else {
+              setCam(videoCamOff);
+              localCameraTrackRef.current.setMuted(true);
+            }
+          }}
+        />
       </div>
       <div>
-        <img 
-          src={Cast} 
-          alt="icon of share screen"  
+        <img
+          src={Mic}
+          alt="icon of mic"
+          onClick={async () => {
+            if (localAudioTrackRef.current.muted) {
+              console.log('On');
+              setMic(mic);
+              await localAudioTrackRef.current.setMuted(false);
+            } else {
+              console.log('Off');
+              setMic(micOff);
+              await localAudioTrackRef.current.setMuted(true);
+            }
+          }}
+        />
+      </div>
+      <div>
+        <img
+          src={Cast}
+          alt="icon of share screen"
           onClick={async () => {
             if (!isScreenSharing) {
               setIsScreenSharing(true);
@@ -112,10 +112,10 @@ function ControlPanel({
           }}
         />
       </div>
-      <div style={{backgroundColor: '#E55454'}}>
-        <img 
-          src={EndCall} 
-          alt="icon of end the call" 
+      <div style={{ backgroundColor: '#E55454' }}>
+        <img
+          src={EndCall}
+          alt="icon of end the call"
           onClick={() => {
             localCameraTrackRef.current?.close();
             localCameraTrackRef.current = null;
@@ -124,9 +124,9 @@ function ControlPanel({
             localAudioTrackRef.current?.close();
             localAudioTrackRef.current = null;
             clientRef.current.leave();
-          }} 
+          }}
         />
-        </div>
+      </div>
     </div>
   );
 }
