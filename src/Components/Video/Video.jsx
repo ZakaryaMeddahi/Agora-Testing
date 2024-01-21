@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function Video({ user }) {
   const videoRef = useRef(null);
+  const [isScreenFull, setIsScreenFull] = useState(false);
 
   useEffect(() => {
     if (user.videoTrack) {
@@ -30,10 +31,15 @@ function Video({ user }) {
 
   return (
     <video
-      className="video-circle"
+      className="video remote-video"
       ref={videoRef}
       autoPlay
       playsInline
+      style={{
+        width: isScreenFull ? '1000px' : '500px',
+        height: isScreenFull ? '600px' : '300px',
+      }}
+      onClick={() => setIsScreenFull(!isScreenFull)}
     />
   );
 }

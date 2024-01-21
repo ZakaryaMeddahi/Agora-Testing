@@ -41,14 +41,21 @@
   color: #888;
 }
 
-.video-circle {
+.video {
   border-radius: 10px;
   overflow: hidden;
   border: 2px solid blueviolet;
   width: 500px;
   height: 300px;
-  transform: rotateY(180deg);
 }
+
+.local-video {
+  transform: rotateY(0deg) !important;
+}
+
+/* .remote-video {
+  transform: rotateY(180deg);
+} */
 
 .container {
   display: flex;

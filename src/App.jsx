@@ -17,6 +17,8 @@ function App() {
   const localScreenTrackRef = useRef();
   const localAudioTrackRef = useRef();
   const [users, setUsers] = useState([]);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isScreenFull, setIsScreenFull] = useState(false);
 
   useEffect(() => {
     const joinChannel = async () => {
@@ -24,7 +26,12 @@ function App() {
         const client = AgoraRTC.createClient({ codec: 'vp8', mode: 'rtc' });
         clientRef.current = client;
         await client.join(options.appId, options.channel, options.token);
-        const localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+        const localVideoTrack = await AgoraRTC.createCameraVideoTrack({
+          encoderConfig: {
+            width: { max: 1920, ideal: 1920, min: 640 },
+            height: { max: 1080, ideal: 1080, min: 480 },
+          },
+        });
         const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         localCameraTrackRef.current = localVideoTrack;
         localAudioTrackRef.current = localAudioTrack;
@@ -72,13 +79,18 @@ function App() {
   }, []);
 
   return (
-    <div className="container"> 
+    <div className="container">
       <video
-        className="video-circle"
+        className={isScreenSharing ? 'video local-video' : 'video'}
         ref={localVideoRef}
         autoPlay
         playsInline
         muted
+        style={{
+          width: isScreenFull ? '1000px' : '500px',
+          height: isScreenFull ? '600px' : '300px',
+        }}
+        onClick={() => setIsScreenFull(!isScreenFull)}
       />
       <VideosList users={users} />
       <ControlPanel
@@ -87,6 +99,8 @@ function App() {
         localScreenTrackRef={localScreenTrackRef}
         localCameraTrackRef={localCameraTrackRef}
         localAudioTrackRef={localAudioTrackRef}
+        isScreenSharing={isScreenSharing}
+        setIsScreenSharing={setIsScreenSharing}
       />
     </div>
   );

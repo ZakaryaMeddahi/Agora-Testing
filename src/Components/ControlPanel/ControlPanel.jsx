@@ -18,8 +18,9 @@ function ControlPanel({
   localCameraTrackRef,
   localScreenTrackRef,
   localAudioTrackRef,
+  isScreenSharing,
+  setIsScreenSharing,
 }) {
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [Mic, setMic] = useState(mic);
   const [Cam, setCam] = useState(videocam);
 
@@ -91,20 +92,25 @@ function ControlPanel({
           alt="icon of share screen"
           onClick={async () => {
             if (!isScreenSharing) {
-              setIsScreenSharing(true);
               const screenTrack = await AgoraRTC.createScreenVideoTrack();
               await clientRef.current.unpublish([localCameraTrackRef.current]);
+              setIsScreenSharing(true);
               localCameraTrackRef.current.close();
               localCameraTrackRef.current = null;
               localScreenTrackRef.current = screenTrack;
               localScreenTrackRef.current.play(localVideoRef.current);
               await clientRef.current.publish([screenTrack]);
             } else {
-              setIsScreenSharing(false);
               await clientRef.current.unpublish([localScreenTrackRef.current]);
+              setIsScreenSharing(false);
               localScreenTrackRef.current.close();
               localScreenTrackRef.current = null;
-              const cameraTrack = await AgoraRTC.createCameraVideoTrack();
+              const cameraTrack = await AgoraRTC.createCameraVideoTrack({
+                encoderConfig: {
+                  width: { max: 1920, ideal: 1920, min: 640 },
+                  height: { max: 1080, ideal: 1080, min: 480 },
+                },
+              });
               localCameraTrackRef.current = cameraTrack;
               localCameraTrackRef.current.play(localVideoRef.current);
               await clientRef.current.publish([cameraTrack]);
