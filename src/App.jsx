@@ -72,7 +72,7 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container"> 
       <video
         className="video-circle"
         ref={localVideoRef}
