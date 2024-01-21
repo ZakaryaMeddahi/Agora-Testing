@@ -27,10 +27,7 @@ function App() {
         clientRef.current = client;
         await client.join(options.appId, options.channel, options.token);
         const localVideoTrack = await AgoraRTC.createCameraVideoTrack({
-          encoderConfig: {
-            width: { max: 1920, ideal: 1920, min: 640 },
-            height: { max: 1080, ideal: 1080, min: 480 },
-          },
+          
         });
         const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         localCameraTrackRef.current = localVideoTrack;

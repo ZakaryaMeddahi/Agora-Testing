@@ -106,10 +106,7 @@ function ControlPanel({
               localScreenTrackRef.current.close();
               localScreenTrackRef.current = null;
               const cameraTrack = await AgoraRTC.createCameraVideoTrack({
-                encoderConfig: {
-                  width: { max: 1920, ideal: 1920, min: 640 },
-                  height: { max: 1080, ideal: 1080, min: 480 },
-                },
+                
               });
               localCameraTrackRef.current = cameraTrack;
               localCameraTrackRef.current.play(localVideoRef.current);
