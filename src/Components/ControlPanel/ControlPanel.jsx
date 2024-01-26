@@ -1,16 +1,11 @@
 /* eslint-disable react/prop-types */
-import AgoraRTC from 'agora-rtc-sdk-ng';
-import { AIDenoiserExtension } from 'agora-extension-ai-denoiser';
-import mic from '../../assets/mic.svg';
-import micOff from '../../assets/mic-off.svg';
-import Cast from '../../assets/Cast.svg';
-import EndCall from '../../assets/EndCall.svg';
-import videocam from '../../assets/videocam.svg';
-import noise from '../../assets/noise.svg';
-import videoCamOff from '../../assets/videocam_off.svg';
 // import moreOption from '../assets/moreOption.svg';
-import { useState } from 'react';
 import './ControlPanel.css';
+import NoiseButton from './NoiseButton/NoiseButton';
+import CameraButton from './CameraButton/CameraButton';
+import LeaveButton from './LeaveButton/LeaveButton';
+import MicButton from './MicButton/MicButton';
+import ScreenButton from './ScreenButton/ScreenButton';
 
 function ControlPanel({
   clientRef,
@@ -21,115 +16,32 @@ function ControlPanel({
   isScreenSharing,
   setIsScreenSharing,
 }) {
-  const [Mic, setMic] = useState(mic);
-  const [Cam, setCam] = useState(videocam);
-
   return (
     <div className="panel">
-      <div>
-        <img
-          src={noise}
-          alt="icon about remove noise"
-          onClick={async () => {
-            let denoiser = new AIDenoiserExtension({
-              assetsPath: '/node_modules/agora-extension-ai-denoiser/external/',
-            });
+      <NoiseButton localAudioTrackRef={localAudioTrackRef} />
 
-            if (!denoiser.checkCompatibility()) {
-              // The extension might not be supported in the current browser. You can stop executing further code logic
-              console.error('Does not support AI Denoiser!');
-            }
+      <CameraButton
+        localCameraTrackRef={localCameraTrackRef}
+        isScreenSharing={isScreenSharing}
+      />
 
-            AgoraRTC.registerExtensions([denoiser]);
-            denoiser.onloaderror = (e) => {
-              console.error(e);
-              processor = null;
-            };
-            let processor = denoiser.createProcessor();
+      <MicButton localAudioTrackRef={localAudioTrackRef} />
 
-            localAudioTrackRef.current
-              .pipe(processor)
-              .pipe(localAudioTrackRef.current.processorDestination);
-            await processor.enable();
-          }}
-        />
-      </div>
-      <div style={{ display: isScreenSharing ? 'none' : 'grid' }}>
-        <img
-          src={Cam}
-          alt="icon of video cam"
-          onClick={async () => {
-            if (localCameraTrackRef.current.muted) {
-              setCam(videocam);
-              localCameraTrackRef.current.setMuted(false);
-            } else {
-              setCam(videoCamOff);
-              localCameraTrackRef.current.setMuted(true);
-            }
-          }}
-        />
-      </div>
-      <div>
-        <img
-          src={Mic}
-          alt="icon of mic"
-          onClick={async () => {
-            if (localAudioTrackRef.current.muted) {
-              console.log('On');
-              setMic(mic);
-              await localAudioTrackRef.current.setMuted(false);
-            } else {
-              console.log('Off');
-              setMic(micOff);
-              await localAudioTrackRef.current.setMuted(true);
-            }
-          }}
-        />
-      </div>
-      <div>
-        <img
-          src={Cast}
-          alt="icon of share screen"
-          onClick={async () => {
-            if (!isScreenSharing) {
-              const screenTrack = await AgoraRTC.createScreenVideoTrack();
-              await clientRef.current.unpublish([localCameraTrackRef.current]);
-              setIsScreenSharing(true);
-              localCameraTrackRef.current.close();
-              localCameraTrackRef.current = null;
-              localScreenTrackRef.current = screenTrack;
-              localScreenTrackRef.current.play(localVideoRef.current);
-              await clientRef.current.publish([screenTrack]);
-            } else {
-              await clientRef.current.unpublish([localScreenTrackRef.current]);
-              setIsScreenSharing(false);
-              localScreenTrackRef.current.close();
-              localScreenTrackRef.current = null;
-              const cameraTrack = await AgoraRTC.createCameraVideoTrack({
-                
-              });
-              localCameraTrackRef.current = cameraTrack;
-              localCameraTrackRef.current.play(localVideoRef.current);
-              await clientRef.current.publish([cameraTrack]);
-            }
-          }}
-        />
-      </div>
-      <div style={{ backgroundColor: '#E55454' }}>
-        <img
-          src={EndCall}
-          alt="icon of end the call"
-          onClick={() => {
-            localCameraTrackRef.current?.close();
-            localCameraTrackRef.current = null;
-            localScreenTrackRef.current?.close();
-            localScreenTrackRef.current = null;
-            localAudioTrackRef.current?.close();
-            localAudioTrackRef.current = null;
-            clientRef.current.leave();
-          }}
-        />
-      </div>
+      <ScreenButton
+        localVideoRef={localVideoRef}
+        localCameraTrackRef={localCameraTrackRef}
+        localScreenTrackRef={localScreenTrackRef}
+        clientRef={clientRef}
+        isScreenSharing={isScreenSharing}
+        setIsScreenSharing={setIsScreenSharing}
+      />
+
+      <LeaveButton
+        localCameraTrackRef={localCameraTrackRef}
+        localScreenTrackRef={localScreenTrackRef}
+        localAudioTrackRef={localAudioTrackRef}
+        clientRef={clientRef}
+      />
     </div>
   );
 }
