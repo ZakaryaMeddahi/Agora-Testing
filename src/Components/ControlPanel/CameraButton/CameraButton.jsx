@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import videocam from '../../../assets/videocam.svg';
 import videoCamOff from '../../../assets/videocam_off.svg';
+import { StreamingContext } from '../../../App';
 
-function CameraButton({ localCameraTrackRef, isScreenSharing }) {
+function CameraButton() {
+  console.log(StreamingContext);
+  const value = useContext(StreamingContext);
+  const { localCameraTrackRef, isScreenSharing } = value;
   const [Cam, setCam] = useState(videocam);
 
   const handleCamera = () => {

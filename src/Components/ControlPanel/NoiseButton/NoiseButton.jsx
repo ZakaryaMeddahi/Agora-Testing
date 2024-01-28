@@ -2,8 +2,13 @@
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import { AIDenoiserExtension } from 'agora-extension-ai-denoiser';
 import noise from '../../../assets/noise.svg';
+import { useContext } from 'react';
+import { StreamingContext } from '../../../App';
 
-function NoiseButton({ localAudioTrackRef }) {
+function NoiseButton() {
+  const value = useContext(StreamingContext);
+  const { localAudioTrackRef } = value;
+
   const handleNoiseSuppression = async () => {
     let denoiser = new AIDenoiserExtension({
       assetsPath: '/node_modules/agora-extension-ai-denoiser/external/',

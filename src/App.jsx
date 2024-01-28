@@ -1,8 +1,10 @@
 import './App.css';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import VideosList from './Components/VideosList/VideosList';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
+
+export const StreamingContext = createContext();
 
 const options = {
   appId: import.meta.env.VITE_APP_ID,
@@ -26,9 +28,7 @@ function App() {
         const client = AgoraRTC.createClient({ codec: 'vp8', mode: 'rtc' });
         clientRef.current = client;
         await client.join(options.appId, options.channel, options.token);
-        const localVideoTrack = await AgoraRTC.createCameraVideoTrack({
-          
-        });
+        const localVideoTrack = await AgoraRTC.createCameraVideoTrack({});
         const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         localCameraTrackRef.current = localVideoTrack;
         localAudioTrackRef.current = localAudioTrack;
@@ -90,15 +90,19 @@ function App() {
         onClick={() => setIsScreenFull(!isScreenFull)}
       />
       <VideosList users={users} />
-      <ControlPanel
-        clientRef={clientRef}
-        localVideoRef={localVideoRef}
-        localScreenTrackRef={localScreenTrackRef}
-        localCameraTrackRef={localCameraTrackRef}
-        localAudioTrackRef={localAudioTrackRef}
-        isScreenSharing={isScreenSharing}
-        setIsScreenSharing={setIsScreenSharing}
-      />
+      <StreamingContext.Provider
+        value={{
+          clientRef,
+          localVideoRef,
+          localScreenTrackRef,
+          localCameraTrackRef,
+          localAudioTrackRef,
+          isScreenSharing,
+          setIsScreenSharing,
+        }}
+      >
+        <ControlPanel />
+      </StreamingContext.Provider>
     </div>
   );
 }

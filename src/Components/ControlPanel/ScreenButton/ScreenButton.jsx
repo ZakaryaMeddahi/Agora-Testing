@@ -1,15 +1,20 @@
 /* eslint-disable react/prop-types */
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import Cast from '../../../assets/Cast.svg';
+import { useContext } from 'react';
+import { StreamingContext } from '../../../App';
 
-function ScreenButton({
-  localVideoRef,
-  localCameraTrackRef,
-  localScreenTrackRef,
-  clientRef,
-  isScreenSharing,
-  setIsScreenSharing,
-}) {
+function ScreenButton() {
+  const value = useContext(StreamingContext);
+  const {
+    localVideoRef,
+    localCameraTrackRef,
+    localScreenTrackRef,
+    clientRef,
+    isScreenSharing,
+    setIsScreenSharing,
+  } = value;
+
   const handleScreenSharing = async () => {
     if (!isScreenSharing) {
       const screenTrack = await AgoraRTC.createScreenVideoTrack();

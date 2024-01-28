@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import mic from '../../../assets/mic.svg';
 import micOff from '../../../assets/mic-off.svg';
+import { StreamingContext } from '../../../App';
 
-function MicButton({ localAudioTrackRef }) {
+function MicButton() {
+  const value = useContext(StreamingContext);
+  const { localAudioTrackRef } = value;
   const [Mic, setMic] = useState(mic);
 
   const handleMicrophone = async () => {

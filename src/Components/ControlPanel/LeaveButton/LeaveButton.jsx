@@ -1,12 +1,17 @@
 /* eslint-disable react/prop-types */
+import { useContext } from 'react';
 import EndCall from '../../../assets/EndCall.svg';
+import { StreamingContext } from '../../../App';
 
-function LeaveButton({
-  localCameraTrackRef,
-  localScreenTrackRef,
-  localAudioTrackRef,
-  clientRef,
-}) {
+function LeaveButton() {
+  const value = useContext(StreamingContext);
+  const {
+    localCameraTrackRef,
+    localScreenTrackRef,
+    localAudioTrackRef,
+    clientRef,
+  } = value;
+
   const endCall = async () => {
     localCameraTrackRef.current?.close();
     localCameraTrackRef.current = null;

@@ -7,41 +7,18 @@ import LeaveButton from './LeaveButton/LeaveButton';
 import MicButton from './MicButton/MicButton';
 import ScreenButton from './ScreenButton/ScreenButton';
 
-function ControlPanel({
-  clientRef,
-  localVideoRef,
-  localCameraTrackRef,
-  localScreenTrackRef,
-  localAudioTrackRef,
-  isScreenSharing,
-  setIsScreenSharing,
-}) {
+function ControlPanel() {
   return (
     <div className="panel">
-      <NoiseButton localAudioTrackRef={localAudioTrackRef} />
+      <NoiseButton />
 
-      <CameraButton
-        localCameraTrackRef={localCameraTrackRef}
-        isScreenSharing={isScreenSharing}
-      />
+      <CameraButton />
 
-      <MicButton localAudioTrackRef={localAudioTrackRef} />
+      <MicButton />
 
-      <ScreenButton
-        localVideoRef={localVideoRef}
-        localCameraTrackRef={localCameraTrackRef}
-        localScreenTrackRef={localScreenTrackRef}
-        clientRef={clientRef}
-        isScreenSharing={isScreenSharing}
-        setIsScreenSharing={setIsScreenSharing}
-      />
+      <ScreenButton />
 
-      <LeaveButton
-        localCameraTrackRef={localCameraTrackRef}
-        localScreenTrackRef={localScreenTrackRef}
-        localAudioTrackRef={localAudioTrackRef}
-        clientRef={clientRef}
-      />
+      <LeaveButton />
     </div>
   );
 }
