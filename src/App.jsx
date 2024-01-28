@@ -1,10 +1,23 @@
 import './App.css';
-import { createContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useReducer, useRef } from 'react';
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import VideosList from './Components/VideosList/VideosList';
 import ControlPanel from './Components/ControlPanel/ControlPanel';
+import {
+  ADD_USER,
+  REMOVE_USER,
+  UPDATE_SCREEN,
+  UPDATE_SHARING,
+} from './actions';
+import reducer from './reducer';
 
 export const StreamingContext = createContext();
+
+const defaultState = {
+  users: [],
+  isScreenSharing: false,
+  isScreenFull: false,
+};
 
 const options = {
   appId: import.meta.env.VITE_APP_ID,
@@ -18,9 +31,32 @@ function App() {
   const localCameraTrackRef = useRef();
   const localScreenTrackRef = useRef();
   const localAudioTrackRef = useRef();
-  const [users, setUsers] = useState([]);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [isScreenFull, setIsScreenFull] = useState(false);
+  // const [users, setUsers] = useState([]);
+  // const [isScreenSharing, setIsScreenSharing] = useState(false);
+  // const [isScreenFull, setIsScreenFull] = useState(false);
+  const [state, dispatch] = useReducer(reducer, defaultState);
+
+  const addUser = (user) => {
+    dispatch({ type: ADD_USER, payload: { user } });
+  };
+
+  const removeUser = (uid) => {
+    dispatch({ type: REMOVE_USER, payload: { uid } });
+  };
+
+  const updateSharing = (isSharing) => {
+    dispatch({
+      type: UPDATE_SHARING,
+      payload: { isSharing },
+    });
+  };
+
+  const updateScreen = () => {
+    dispatch({
+      type: UPDATE_SCREEN,
+      payload: { isSharing: !state.isScreenFull },
+    });
+  };
 
   useEffect(() => {
     const joinChannel = async () => {
@@ -44,11 +80,12 @@ function App() {
         await clientRef.current.subscribe(user, mediaType);
 
         if (mediaType === 'video') {
-          setUsers((users) => {
-            const prevUsers = users.filter((u) => u.uid !== user.uid);
-            const newUsers = [...prevUsers, user];
-            return newUsers;
-          });
+          // setUsers((users) => {
+          //   const prevUsers = users.filter((u) => u.uid !== user.uid);
+          //   const newUsers = [...prevUsers, user];
+          //   return newUsers;
+          // });
+          addUser(user);
         }
 
         if (mediaType === 'audio') {
@@ -62,10 +99,11 @@ function App() {
 
       clientRef.current.on('user-left', (user) => {
         console.log(user.uid + 'has left the channel');
-        setUsers((users) => {
-          const newUsers = users.filter((u) => u.uid !== user.uid);
-          return newUsers;
-        });
+        // setUsers((users) => {
+        //   const newUsers = users.filter((u) => u.uid !== user.uid);
+        //   return newUsers;
+        // });
+        removeUser(user.uid);
       });
     };
     joinChannel();
@@ -78,18 +116,18 @@ function App() {
   return (
     <div className="container">
       <video
-        className={isScreenSharing ? 'video local-video' : 'video'}
+        className={state.isScreenSharing ? 'video local-video' : 'video'}
         ref={localVideoRef}
         autoPlay
         playsInline
         muted
         style={{
-          width: isScreenFull ? '1000px' : '500px',
-          height: isScreenFull ? '600px' : '300px',
+          width: state.isScreenFull ? '1000px' : '500px',
+          height: state.isScreenFull ? '600px' : '300px',
         }}
-        onClick={() => setIsScreenFull(!isScreenFull)}
+        onClick={() => updateScreen()}
       />
-      <VideosList users={users} />
+      <VideosList users={state.users} />
       <StreamingContext.Provider
         value={{
           clientRef,
@@ -97,8 +135,8 @@ function App() {
           localScreenTrackRef,
           localCameraTrackRef,
           localAudioTrackRef,
-          isScreenSharing,
-          setIsScreenSharing,
+          state,
+          updateSharing,
         }}
       >
         <ControlPanel />

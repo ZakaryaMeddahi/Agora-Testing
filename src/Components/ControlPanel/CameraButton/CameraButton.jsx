@@ -7,7 +7,7 @@ import { StreamingContext } from '../../../App';
 function CameraButton() {
   console.log(StreamingContext);
   const value = useContext(StreamingContext);
-  const { localCameraTrackRef, isScreenSharing } = value;
+  const { localCameraTrackRef, state } = value;
   const [Cam, setCam] = useState(videocam);
 
   const handleCamera = () => {
@@ -21,7 +21,7 @@ function CameraButton() {
   };
 
   return (
-    <div style={{ display: isScreenSharing ? 'none' : 'grid' }}>
+    <div style={{ display: state.isScreenSharing ? 'none' : 'grid' }}>
       <img src={Cam} alt="video cam icon" onClick={handleCamera} />
     </div>
   );
